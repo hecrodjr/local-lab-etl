@@ -1,40 +1,31 @@
 version: '3'
+
 services:
   elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:7.14.0
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.12.1
     container_name: elasticsearch
-    environment:
-      - discovery.type=single-node
+    ports:
+      - 9200:9200
+      - 9300:9300
     volumes:
-      - elasticsearch-data:/usr/share/elasticsearch/data
-    networks:
-      - elk-network
+      - elasticsearch_data:/usr/share/elasticsearch/data
+
+  logstash:
+    image: docker.elastic.co/logstash/logstash:7.12.1
+    container_name: logstash
+    volumes:
+      - ./logstash-config:/usr/share/logstash/pipeline
+    depends_on:
+      - elasticsearch
 
   kibana:
-    image: docker.elastic.co/kibana/kibana:7.14.0
+    image: docker.elastic.co/kibana/kibana:7.12.1
     container_name: kibana
-    environment:
-      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
     ports:
       - 5601:5601
-    networks:
-      - elk-network
-
-  telegraf:
-    image: telegraf:1.20.3
-    container_name: telegraf
-    volumes:
-      - telegraf-config:/etc/telegraf
-      - telegraf-data:/var/lib/telegraf
-      - /var/run/docker.sock:/var/run/docker.sock
-    user: "telegraf:1000"
-    networks:
-      - elk-network
-
-networks:
-  elk-network:
+    depends_on:
+      - elasticsearch
 
 volumes:
-  elasticsearch-data:
-  telegraf-config:
-  telegraf-data:
+  elasticsearch_data:
+    driver: local
