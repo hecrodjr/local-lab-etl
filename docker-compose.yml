@@ -26,6 +26,7 @@ services:
     volumes:
       - telegraf-config:/etc/telegraf
       - telegraf-data:/var/lib/telegraf
+      - /var/run/docker.sock:/var/run/docker.sock
     networks:
       - elk-network
 
