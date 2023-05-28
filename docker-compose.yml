@@ -27,7 +27,7 @@ services:
       - telegraf-config:/etc/telegraf
       - telegraf-data:/var/lib/telegraf
       - /var/run/docker.sock:/var/run/docker.sock
-    user: "telegraf:{{$(stat -c '%g' /var/run/docker.sock)}}"
+    user: "telegraf:1000"
     networks:
       - elk-network
 
