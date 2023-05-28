@@ -1,0 +1,38 @@
+version: '3'
+services:
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.14.0
+    container_name: elasticsearch
+    environment:
+      - discovery.type=single-node
+    volumes:
+      - elasticsearch-data:/usr/share/elasticsearch/data
+    networks:
+      - elk-network
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.14.0
+    container_name: kibana
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+    ports:
+      - 5601:5601
+    networks:
+      - elk-network
+
+  telegraf:
+    image: telegraf:1.20.3
+    container_name: telegraf
+    volumes:
+      - telegraf-config:/etc/telegraf
+      - telegraf-data:/var/lib/telegraf
+    networks:
+      - elk-network
+
+networks:
+  elk-network:
+
+volumes:
+  elasticsearch-data:
+  telegraf-config:
+  telegraf-data:
